@@ -30,7 +30,7 @@ $ make testacc
 
 The documentation is created thank's to a fork of https://github.com/terraform-providers/terraform-provider-baiducloud/tree/master/gendocs.
 
-## [Terraform Registry](https://registry.terraform.io/providers/Trois-Six/sendgrid)
+## [Terraform Registry](https://registry.terraform.io/providers/sapronov-st/sendgrid)
 
 ## Known issues
 

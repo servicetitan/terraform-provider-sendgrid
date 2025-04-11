@@ -2,14 +2,16 @@
 Provide a resource to manage a subuser.
 Example Usage
 ```hcl
-resource "sendgrid_subuser" "subuser" {
-	username = "my-subuser"
-	email    = "subuser@example.org"
-	password = "Passw0rd!"
-	ips      = [
-		"127.0.0.1"
-	]
-}
+
+	resource "sendgrid_subuser" "subuser" {
+		username = "my-subuser"
+		email    = "subuser@example.org"
+		password = "Passw0rd!"
+		ips      = [
+			"127.0.0.1"
+		]
+	}
+
 ```
 Import
 A subuser can be imported, e.g.
@@ -24,7 +26,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	sendgrid "github.com/trois-six/terraform-provider-sendgrid/sdk"
+	sendgrid "github.com/sapronov-st/terraform-provider-sendgrid/sdk"
 )
 
 func resourceSendgridSubuser() *schema.Resource {

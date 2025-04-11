@@ -2,10 +2,12 @@
 Provide a resource to manage link branding.
 Example Usage
 ```hcl
-resource "sendgrid_link_branding" "default" {
-	domain = "example.com"
-    is_default = true
-}
+
+	resource "sendgrid_link_branding" "default" {
+		domain = "example.com"
+	    is_default = true
+	}
+
 ```
 Import
 An unsubscribe group can be imported, e.g.
@@ -21,7 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	sendgrid "github.com/trois-six/terraform-provider-sendgrid/sdk"
+	sendgrid "github.com/sapronov-st/terraform-provider-sendgrid/sdk"
 )
 
 func resourceSendgridLinkBranding() *schema.Resource { //nolint:funlen

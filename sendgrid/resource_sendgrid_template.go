@@ -2,10 +2,12 @@
 Provide a resource to manage a template of email.
 Example Usage
 ```hcl
-resource "sendgrid_template" "template" {
-	name       = "my-template"
-	generation = "dynamic"
-}
+
+	resource "sendgrid_template" "template" {
+		name       = "my-template"
+		generation = "dynamic"
+	}
+
 ```
 Import
 A template can be imported, e.g.
@@ -21,7 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	sendgrid "github.com/trois-six/terraform-provider-sendgrid/sdk"
+	sendgrid "github.com/sapronov-st/terraform-provider-sendgrid/sdk"
 )
 
 func resourceSendgridTemplate() *schema.Resource {

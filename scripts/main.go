@@ -15,7 +15,7 @@ import (
 	"text/template"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/trois-six/terraform-provider-sendgrid/sendgrid"
+	"github.com/sapronov-st/terraform-provider-sendgrid/sendgrid"
 )
 
 const (
@@ -386,6 +386,7 @@ func getFileDescription(fname string) (string, error) {
 }
 
 // getSubStruct get sub structure from go file.
+//
 //nolint:gocognit
 func getSubStruct(step int, k string, v *schema.Schema) []string { //nolint:cyclop,funlen
 	var subStructs []string

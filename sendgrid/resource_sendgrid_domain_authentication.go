@@ -2,12 +2,14 @@
 Provide a resource to manage a domain authentication.
 Example Usage
 ```hcl
-resource "sendgrid_domain_authentication" "default" {
-	domain = "example.com"
-    ips = [ "10.10.10.10" ]
-    is_default = true
-    automatic_security = false
-}
+
+	resource "sendgrid_domain_authentication" "default" {
+		domain = "example.com"
+	    ips = [ "10.10.10.10" ]
+	    is_default = true
+	    automatic_security = false
+	}
+
 ```
 Import
 An unsubscribe group can be imported, e.g.
@@ -23,7 +25,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	sendgrid "github.com/trois-six/terraform-provider-sendgrid/sdk"
+	sendgrid "github.com/sapronov-st/terraform-provider-sendgrid/sdk"
 )
 
 func resourceSendgridDomainAuthentication() *schema.Resource { //nolint:funlen

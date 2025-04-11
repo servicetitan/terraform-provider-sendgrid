@@ -5,14 +5,16 @@ Provide a resource to manage SSO integrations.
 workflow once after supplying all required fields including an SSO certificate via `aws_sso_certificate`.
 Example Usage
 ```hcl
-resource "sendgrid_sso_integration" "sso" {
-	name    = "IdP"
-	enabled = false
 
-	signin_url  = "https://idp.com/signin"
-	signout_url = "https://idp.com/signout"
-	entity_id   = "https://idp.com/12345"
-}
+	resource "sendgrid_sso_integration" "sso" {
+		name    = "IdP"
+		enabled = false
+
+		signin_url  = "https://idp.com/signin"
+		signout_url = "https://idp.com/signout"
+		entity_id   = "https://idp.com/12345"
+	}
+
 ```
 Import
 A SSO integration can be imported, e.g.
@@ -27,7 +29,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	sendgrid "github.com/trois-six/terraform-provider-sendgrid/sdk"
+	sendgrid "github.com/sapronov-st/terraform-provider-sendgrid/sdk"
 )
 
 func resourceSendgridSSOIntegration() *schema.Resource {

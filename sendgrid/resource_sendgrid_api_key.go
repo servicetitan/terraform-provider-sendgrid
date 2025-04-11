@@ -2,13 +2,15 @@
 Provide a resource to manage an API key.
 Example Usage
 ```hcl
-resource "sendgrid_api_key" "api_key" {
-	name   = "my-api-key"
-	scopes = [
-		"mail.send",
-		"sender_verification_eligible",
-	]
-}
+
+	resource "sendgrid_api_key" "api_key" {
+		name   = "my-api-key"
+		scopes = [
+			"mail.send",
+			"sender_verification_eligible",
+		]
+	}
+
 ```
 Import
 An API key can be imported, e.g.
@@ -25,7 +27,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	sendgrid "github.com/trois-six/terraform-provider-sendgrid/sdk"
+	sendgrid "github.com/sapronov-st/terraform-provider-sendgrid/sdk"
 )
 
 func resourceSendgridAPIKey() *schema.Resource {

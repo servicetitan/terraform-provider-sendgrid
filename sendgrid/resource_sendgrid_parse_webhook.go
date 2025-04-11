@@ -2,12 +2,14 @@
 Provide a resource to manage parse webhook settings.
 Example Usage
 ```hcl
-resource "sendgrid_parse_webhook" "default" {
-	hostname = "parse.foo.bar"
-    url = "https://foo.bar/sendgrid/inbound"
-    spam_check = false
-    send_raw = false
-}
+
+	resource "sendgrid_parse_webhook" "default" {
+		hostname = "parse.foo.bar"
+	    url = "https://foo.bar/sendgrid/inbound"
+	    spam_check = false
+	    send_raw = false
+	}
+
 ```
 Import
 An unsubscribe webhook can be imported, e.g.
@@ -22,7 +24,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	sendgrid "github.com/trois-six/terraform-provider-sendgrid/sdk"
+	sendgrid "github.com/sapronov-st/terraform-provider-sendgrid/sdk"
 )
 
 func resourceSendgridParseWebhook() *schema.Resource {

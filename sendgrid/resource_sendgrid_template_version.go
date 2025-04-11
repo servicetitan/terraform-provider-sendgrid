@@ -2,19 +2,21 @@
 Provide a resource to manage a version of template.
 Example Usage
 ```hcl
-resource "sendgrid_template" "template" {
-	name       = "my-template"
-	generation = "dynamic"
-}
 
-resource "sendgrid_template_version" "template_version" {
-	name                   = "my-template-version"
-	template_id            = sendgrid_template.template.id
-	active                 = 1
-	html_content           = "<%body%>"
-	generate_plain_content = true
-	subject                = "subject"
-}
+	resource "sendgrid_template" "template" {
+		name       = "my-template"
+		generation = "dynamic"
+	}
+
+	resource "sendgrid_template_version" "template_version" {
+		name                   = "my-template-version"
+		template_id            = sendgrid_template.template.id
+		active                 = 1
+		html_content           = "<%body%>"
+		generate_plain_content = true
+		subject                = "subject"
+	}
+
 ```
 Import
 A template version can be imported, e.g.
@@ -32,7 +34,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	sendgrid "github.com/trois-six/terraform-provider-sendgrid/sdk"
+	sendgrid "github.com/sapronov-st/terraform-provider-sendgrid/sdk"
 )
 
 // ImportSplitParts is the expected length of

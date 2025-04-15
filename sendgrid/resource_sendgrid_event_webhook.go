@@ -165,7 +165,16 @@ func resourceSendgridEventWebhook() *schema.Resource { //nolint:funlen
 }
 
 func resourceSendgridEventWebhookDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	// no op as there is no way to delete it
+	c := m.(*sendgrid.Client)
+
+	_, err := sendgrid.RetryOnRateLimit(ctx, d, func() (interface{}, sendgrid.RequestError) {
+		return c.DeleteEventWebhook(d.Id())
+	})
+
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
 }
 

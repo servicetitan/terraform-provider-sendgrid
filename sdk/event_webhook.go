@@ -83,7 +83,7 @@ func (c *Client) CreateEventWebhook(webhook *EventWebhook) (*EventWebhook, Reque
 	return parseEventWebhook(respBody)
 }
 
-// PatchEventWebhook creates an EventWebhook and returns it.
+// PatchEventWebhook updates the EventWebhook and returns it.
 func (c *Client) PatchEventWebhook(webhook *EventWebhook) (*EventWebhook, RequestError) {
 	if webhook.URL == "" {
 		return nil, RequestError{
@@ -117,7 +117,7 @@ func (c *Client) PatchEventWebhook(webhook *EventWebhook) (*EventWebhook, Reques
 	return parseEventWebhook(respBody)
 }
 
-// ReadEventWebhook retrieves an EventWebhook and returns it.
+// ReadEventWebhook retrieves the EventWebhook and returns it.
 func (c *Client) ReadEventWebhook(id string) (*EventWebhook, RequestError) {
 	if id == "" {
 		return nil, RequestError{
@@ -135,6 +135,33 @@ func (c *Client) ReadEventWebhook(id string) (*EventWebhook, RequestError) {
 	}
 
 	return parseEventWebhook(respBody)
+}
+
+// DeleteEventWebhook deletes the EventWebhook.
+func (c *Client) DeleteEventWebhook(id string) (*string, RequestError) {
+	if id == "" {
+		return nil, RequestError{
+			StatusCode: http.StatusInternalServerError,
+			Err:        ErrIdRequired,
+		}
+	}
+
+	respBody, statusCode, err := c.Get("DELETE", fmt.Sprintf("/user/webhooks/event/settings/%s", id))
+	if err != nil {
+		return nil, RequestError{
+			StatusCode: http.StatusInternalServerError,
+			Err:        fmt.Errorf("failed deleting event webhook: %w", err),
+		}
+	}
+
+	if statusCode >= http.StatusMultipleChoices {
+		return nil, RequestError{
+			StatusCode: statusCode,
+			Err:        fmt.Errorf("%w, status: %d, response: %s", ErrFailedPatchingEventWebhook, statusCode, respBody),
+		}
+	}
+
+	return &respBody, RequestError{StatusCode: http.StatusOK, Err: nil}
 }
 
 func (c *Client) ConfigureEventWebhookSigning(id string, enabled bool) (*EventWebhookSigning, RequestError) {

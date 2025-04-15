@@ -40,7 +40,9 @@ func resourceSendgridEventWebhook() *schema.Resource { //nolint:funlen
 		ReadContext:   resourceSendgridEventWebhookRead,
 		UpdateContext: resourceSendgridEventWebhookUpdate,
 		DeleteContext: resourceSendgridEventWebhookDelete,
-
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"enabled": {
 				Type:        schema.TypeBool,

@@ -36,9 +36,9 @@ import (
 
 func resourceSendgridEventWebhook() *schema.Resource { //nolint:funlen
 	return &schema.Resource{
-		CreateContext: resourceSendgridEventWebhookPatch,
+		CreateContext: resourceSendgridEventWebhookCreate,
 		ReadContext:   resourceSendgridEventWebhookRead,
-		UpdateContext: resourceSendgridEventWebhookPatch,
+		UpdateContext: resourceSendgridEventWebhookUpdate,
 		DeleteContext: resourceSendgridEventWebhookDelete,
 
 		Schema: map[string]*schema.Schema{
@@ -167,73 +167,98 @@ func resourceSendgridEventWebhookDelete(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceSendgridEventWebhookPatch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceSendgridEventWebhookCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*sendgrid.Client)
 
-	enabled := d.Get("enabled").(bool)
-	url := d.Get("url").(string)
-	groupResubscribe := d.Get("group_resubscribe").(bool)
-	delivered := d.Get("delivered").(bool)
-	groupUnsubscribe := d.Get("group_unsubscribe").(bool)
-	spamReport := d.Get("spam_report").(bool)
-	bounce := d.Get("bounce").(bool)
-	deferred := d.Get("deferred").(bool)
-	unsubscribe := d.Get("unsubscribe").(bool)
-	processed := d.Get("processed").(bool)
-	open := d.Get("open").(bool)
-	click := d.Get("click").(bool)
-	dropped := d.Get("dropped").(bool)
-	oauthClientID := d.Get("oauth_client_id").(string)
-	oauthClientSecret := d.Get("oauth_client_secret").(string)
-	oauthTokenURL := d.Get("oauth_token_url").(string)
+	webhookResource := readEventWebhookFromResource(d)
 
-	_, err := sendgrid.RetryOnRateLimit(ctx, d, func() (interface{}, sendgrid.RequestError) {
-		return c.PatchEventWebhook(
-			enabled,
-			url,
-			groupResubscribe,
-			delivered,
-			groupUnsubscribe,
-			spamReport,
-			bounce,
-			deferred,
-			unsubscribe,
-			processed,
-			open,
-			click,
-			dropped,
-			oauthClientID,
-			oauthClientSecret,
-			oauthTokenURL,
-		)
+	result, err := sendgrid.RetryOnRateLimit(ctx, d, func() (interface{}, sendgrid.RequestError) {
+		return c.CreateEventWebhook(webhookResource)
 	})
+	webhook := result.(*sendgrid.EventWebhook)
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if d.HasChange("signed") {
-		if _, err := c.ConfigureEventWebhookSigning(d.Get("signed").(bool)); err.Err != nil {
+	d.SetId(webhook.Id)
+
+	signed := d.Get("signed").(bool)
+	if signed {
+		if _, err := c.ConfigureEventWebhookSigning(webhook.Id, signed); err.Err != nil {
 			return diag.FromErr(err.Err)
 		}
 	}
 
-	if c.OnBehalfOf != "" {
-		d.SetId(c.OnBehalfOf) // since there is only a global event webhook per subuser
-	} else {
-		d.SetId("default") // or at the parent account level
+	return resourceSendgridEventWebhookRead(ctx, d, c)
+}
+
+func resourceSendgridEventWebhookUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*sendgrid.Client)
+
+	webhookResouce := readEventWebhookFromResource(d)
+
+	if d.HasChangesExcept("signed", "public_key") {
+		_, err := sendgrid.RetryOnRateLimit(ctx, d, func() (interface{}, sendgrid.RequestError) {
+			return c.PatchEventWebhook(webhookResouce)
+		})
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
-	return resourceSendgridEventWebhookRead(ctx, d, m)
+	if d.HasChange("signed") {
+		signed := d.Get("signed").(bool)
+		if _, err := c.ConfigureEventWebhookSigning(webhookResouce.Id, signed); err.Err != nil {
+			return diag.FromErr(err.Err)
+		}
+	}
+
+	return resourceSendgridEventWebhookRead(ctx, d, c)
 }
 
 func resourceSendgridEventWebhookRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*sendgrid.Client)
 
-	webhook, err := c.ReadEventWebhook()
+	webhook, err := c.ReadEventWebhook(d.Id())
 	if err.Err != nil {
 		return diag.FromErr(err.Err)
 	}
 
+	webhookSigning, err := c.ReadEventWebhookSigning(d.Id())
+	if err.Err != nil {
+		return diag.FromErr(err.Err)
+	}
+
+	setEventWebhookToResource(d, webhook, webhookSigning)
+
+	return nil
+}
+
+func readEventWebhookFromResource(d *schema.ResourceData) *sendgrid.EventWebhook {
+	return &sendgrid.EventWebhook{
+		Id:                d.Id(),
+		Enabled:           d.Get("enabled").(bool),
+		URL:               d.Get("url").(string),
+		GroupResubscribe:  d.Get("group_resubscribe").(bool),
+		Delivered:         d.Get("delivered").(bool),
+		GroupUnsubscribe:  d.Get("group_unsubscribe").(bool),
+		SpamReport:        d.Get("spam_report").(bool),
+		Bounce:            d.Get("bounce").(bool),
+		Deferred:          d.Get("deferred").(bool),
+		Unsubscribe:       d.Get("unsubscribe").(bool),
+		Processed:         d.Get("processed").(bool),
+		Open:              d.Get("open").(bool),
+		Click:             d.Get("click").(bool),
+		Dropped:           d.Get("dropped").(bool),
+		OAuthClientID:     d.Get("oauth_client_id").(string),
+		OAuthClientSecret: d.Get("oauth_client_secret").(string),
+		OAuthTokenURL:     d.Get("oauth_token_url").(string),
+	}
+}
+
+func setEventWebhookToResource(d *schema.ResourceData, webhook *sendgrid.EventWebhook, webhookSigning *sendgrid.EventWebhookSigning) {
+	d.SetId(webhook.Id)
 	//nolint:errcheck
 	d.Set("enabled", webhook.Enabled)
 	//nolint:errcheck
@@ -265,14 +290,8 @@ func resourceSendgridEventWebhookRead(_ context.Context, d *schema.ResourceData,
 	//nolint:errcheck
 	d.Set("oauth_token_url", webhook.OAuthTokenURL)
 
-	webhookSigning, err := c.ReadEventWebhookSigning()
-	if err.Err != nil {
-		return diag.FromErr(err.Err)
-	}
 	//nolint:errcheck
 	d.Set("public_key", webhookSigning.PublicKey)
 	//nolint:errcheck
 	d.Set("signed", webhookSigning.PublicKey != "")
-
-	return nil
 }

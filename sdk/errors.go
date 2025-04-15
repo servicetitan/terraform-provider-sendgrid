@@ -72,6 +72,8 @@ var (
 
 	ErrHostnameRequired = errors.New("a hostname is required")
 
+	ErrIdRequired = errors.New("an id is required")
+
 	ErrURLRequired = errors.New("a url is required")
 
 	ErrFailedPatchingEventWebhook = errors.New("failed to patch event webhook")

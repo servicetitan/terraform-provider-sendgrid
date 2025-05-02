@@ -26,7 +26,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	sendgrid "github.com/sapronov-st/terraform-provider-sendgrid/sdk"
+	sendgrid "github.com/servicetitan/terraform-provider-sendgrid/sdk"
 )
 
 func resourceSendgridSubuser() *schema.Resource {

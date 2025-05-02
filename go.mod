@@ -1,4 +1,4 @@
-module github.com/sapronov-st/terraform-provider-sendgrid
+module github.com/servicetitan/terraform-provider-sendgrid
 
 go 1.17
 

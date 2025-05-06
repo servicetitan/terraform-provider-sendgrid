@@ -19,8 +19,8 @@ jobs:
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v3
         with:
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_KEY_PASSPHRASE }}
+          gpg-private-key: ${{ secrets.TERRAFORM_PROVIDER_REGISTRY_PRIVATE_KEY }}
+          passphrase: ${{ secrets.TERRAFORM_PROVIDER_REGISTRY_PRIVATE_KEY_PASSPHRASE }}
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@9c156ee8a17a598857849441385a2041ef570552 # v6.3.0
         with:
